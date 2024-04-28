@@ -5,6 +5,11 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 
+
+// Should be updated to the correct paths when first used
+#define FONT_PATH "C:\\Projekty\\Cpp_Game_Engine\\Cpp_Game_Engine\\src\\resources\\fonts\\"
+#define CONFIG_PATH "C:\\Projekty\\Cpp_Game_Engine\\Cpp_Game_Engine\\src\\resources\\config.txt"
+
 class AShape
 {
 public:
@@ -66,9 +71,7 @@ int main()
 
     std::vector<AShape> shapes;
 
-    auto filePath = "C:\\Projekty\\Cpp_Game_Engine\\Cpp_Game_Engine\\src\\resources\\config.txt";
-
-    std::ifstream fin(filePath);
+    std::ifstream fin(CONFIG_PATH);
     if (!fin)
     {
         std::cerr << "Error opening file\n";
@@ -89,9 +92,8 @@ int main()
         if (configType == "Font")
         {
             std::string fontPath;
-            std::string fontsFolderPath = "C:\\Projekty\\Cpp_Game_Engine\\Cpp_Game_Engine\\src\\resources\\fonts\\";
             fin >> fontPath;
-            if (!font.loadFromFile(fontsFolderPath + fontPath))
+            if (!font.loadFromFile(FONT_PATH + fontPath))
             {
                 std::cerr << "Error loading font\n";
                 exit(-1);
@@ -134,7 +136,7 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "SFML works!");
     ImGui::SFML::Init(window);
-    window.setFramerateLimit(60);
+    //window.setFramerateLimit(60);
 
     sf::Clock deltaClock;
     int selectedShape = 0;
