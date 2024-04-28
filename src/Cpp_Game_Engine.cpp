@@ -66,7 +66,9 @@ int main()
 
     std::vector<AShape> shapes;
 
-    std::ifstream fin("config.txt");
+    auto filePath = "C:\\Projekty\\Cpp_Game_Engine\\Cpp_Game_Engine\\src\\resources\\config.txt";
+
+    std::ifstream fin(filePath);
     if (!fin)
     {
         std::cerr << "Error opening file\n";
@@ -87,8 +89,9 @@ int main()
         if (configType == "Font")
         {
             std::string fontPath;
+            std::string fontsFolderPath = "C:\\Projekty\\Cpp_Game_Engine\\Cpp_Game_Engine\\src\\resources\\fonts\\";
             fin >> fontPath;
-            if (!font.loadFromFile(fontPath))
+            if (!font.loadFromFile(fontsFolderPath + fontPath))
             {
                 std::cerr << "Error loading font\n";
                 exit(-1);
@@ -149,6 +152,8 @@ int main()
         }
         ImGui::SFML::Update(window, deltaClock.restart());
 
+        // Dorobić ImGui, w którym będzie combobox do wybrania odpowiedniego kształtu, a także pola do:
+        // Zaznaczenia czy jest widoczny, zmiany koloru, Skalowania, Obu prędkości, Koloru i nazwy
         ImGui::Begin("Shapes");
         ImGui::Text("Shapes");
         ImGui::End();

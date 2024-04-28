@@ -70,6 +70,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -104,7 +110,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC;SFML_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\libraries\SFML-2.5.1\include;C:\libraries\SFML-2.5.1\include;%(AdditionalIncludeDirectories);$(SolutionDir)imGui\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\libraries\SFML-2.5.1\include;$(SolutionDir)\src\imGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -113,7 +119,8 @@
       <AdditionalDependencies>sfml-graphics-s-d.lib;sfml-window-s-d.lib;sfml-system-s-d.lib;sfml-main-d.lib;opengl32.lib;freetype.lib;winmm.lib;gdi32.lib;%(AdditionalDependencies);sfml-graphics-s-d.lib;sfml-window-s-d.lib;sfml-system-s-d.lib;sfml-main-d.lib;opengl32.lib;freetype.lib;winmm.lib;gdi32.lib;opengl32.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy "$(ProjectDir)fonts" "$(OutDir)fonts"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>
@@ -128,7 +135,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\libraries\SFML-2.5.1\include;;$(SolutionDir)imGui\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\libraries\SFML-2.5.1\include;$(SolutionDir)\src\imGui</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,10 +143,11 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\libraries\SFML-2.5.1\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-s.lib;sfml-window-s.lib;sfml-system-s.lib;sfml-main.lib;opengl32.lib;freetype.lib;winmm.lib;gdi32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies);opengl32.lib</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-s.lib;sfml-window-s.lib;sfml-system-s.lib;sfml-main.lib;opengl32.lib;freetype.lib;winmm.lib;gdi32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy "$(ProjectDir)fonts" "$(OutDir)fonts"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>
@@ -147,29 +155,29 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Cpp_Game_Engine.cpp" />
-    <ClCompile Include="imGui\imgui-SFML.cpp" />
-    <ClCompile Include="imGui\imgui.cpp" />
-    <ClCompile Include="imGui\imgui_draw.cpp" />
-    <ClCompile Include="imGui\imgui_tables.cpp" />
-    <ClCompile Include="imGui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Cpp_Game_Engine.cpp" />
+    <ClCompile Include="src\imGui\imgui-SFML.cpp" />
+    <ClCompile Include="src\imGui\imgui.cpp" />
+    <ClCompile Include="src\imGui\imgui_draw.cpp" />
+    <ClCompile Include="src\imGui\imgui_tables.cpp" />
+    <ClCompile Include="src\imGui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="imGui\imconfig-SFML.h" />
-    <ClInclude Include="imGui\imconfig.h" />
-    <ClInclude Include="imGui\imgui-SFML.h" />
-    <ClInclude Include="imGui\imgui-SFML_export.h" />
-    <ClInclude Include="imGui\imgui.h" />
-    <ClInclude Include="imGui\imgui_internal.h" />
-    <ClInclude Include="imGui\imstb_rectpack.h" />
-    <ClInclude Include="imGui\imstb_textedit.h" />
-    <ClInclude Include="imGui\imstb_truetype.h" />
+    <ClInclude Include="src\imGui\imconfig-SFML.h" />
+    <ClInclude Include="src\imGui\imconfig.h" />
+    <ClInclude Include="src\imGui\imgui-SFML.h" />
+    <ClInclude Include="src\imGui\imgui-SFML_export.h" />
+    <ClInclude Include="src\imGui\imgui.h" />
+    <ClInclude Include="src\imGui\imgui_internal.h" />
+    <ClInclude Include="src\imGui\imstb_rectpack.h" />
+    <ClInclude Include="src\imGui\imstb_textedit.h" />
+    <ClInclude Include="src\imGui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="config.txt">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </Text>
+    <Text Include="src\config.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

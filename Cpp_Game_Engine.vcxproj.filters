@@ -15,55 +15,58 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Cpp_Game_Engine.cpp">
+    <ClCompile Include="src\Cpp_Game_Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imGui\imgui.cpp">
+    <ClCompile Include="src\imGui\imgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imGui\imgui_draw.cpp">
+    <ClCompile Include="src\imGui\imgui_draw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imGui\imgui_tables.cpp">
+    <ClCompile Include="src\imGui\imgui_tables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imGui\imgui_widgets.cpp">
+    <ClCompile Include="src\imGui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imGui\imgui-SFML.cpp">
+    <ClCompile Include="src\imGui\imgui-SFML.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="imGui\imconfig.h">
+    <ClInclude Include="src\imGui\imconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imGui\imconfig-SFML.h">
+    <ClInclude Include="src\imGui\imconfig-SFML.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imGui\imgui.h">
+    <ClInclude Include="src\imGui\imgui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imGui\imgui_internal.h">
+    <ClInclude Include="src\imGui\imgui_internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imGui\imgui-SFML.h">
+    <ClInclude Include="src\imGui\imgui-SFML.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imGui\imgui-SFML_export.h">
+    <ClInclude Include="src\imGui\imgui-SFML_export.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imGui\imstb_rectpack.h">
+    <ClInclude Include="src\imGui\imstb_rectpack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imGui\imstb_textedit.h">
+    <ClInclude Include="src\imGui\imstb_textedit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imGui\imstb_truetype.h">
+    <ClInclude Include="src\imGui\imstb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="config.txt" />
+    <Text Include="src\config.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
   </ItemGroup>
 </Project>
