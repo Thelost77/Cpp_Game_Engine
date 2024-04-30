@@ -7,8 +7,13 @@
 
 
 // Should be updated to the correct paths when first used
-#define FONT_PATH "C:\\Projekty\\Cpp_Game_Engine\\Cpp_Game_Engine\\src\\resources\\fonts\\"
-#define CONFIG_PATH "C:\\Projekty\\Cpp_Game_Engine\\Cpp_Game_Engine\\src\\resources\\config.txt"
+// Windows
+// #define FONT_PATH "C:\\Projekty\\Cpp_Game_Engine\\Cpp_Game_Engine\\src\\resources\\fonts\\"
+// #define CONFIG_PATH "C:\\Projekty\\Cpp_Game_Engine\\Cpp_Game_Engine\\src\\resources\\config.txt"
+
+// Mac
+#define FONT_PATH "/Users/wiktorziebka/Projects/Cpp_Game_Engine/src/resources/fonts/"
+#define CONFIG_PATH "/Users/wiktorziebka/Projects/Cpp_Game_Engine/src/resources/config.txt"
 
 class AShape
 {
