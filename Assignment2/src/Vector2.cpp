@@ -44,26 +44,26 @@ Vector2 Vector2::operator/(float scalar) const
 
 void Vector2::operator+=(const Vector2 &rhs)
 {
-    x + rhs.x;
-    y + rhs.y;
+    x += rhs.x;
+    y += rhs.y;
 }
 
 void Vector2::operator-=(const Vector2 &rhs)
 {
-    x - rhs.x;
-    y - rhs.y;
+    x -= rhs.x;
+    y -= rhs.y;
 }
 
 void Vector2::operator*=(const float val)
 {
-    x *val;
-    y *val;
+    x *= val;
+    y *= val;
 }
 
 void Vector2::operator/=(const float val)
 {
-    x / val;
-    y / val;
+    x /= val;
+    y /= val;
 }
 
 Vector2 Vector2::operator-(const Vector2 &other) const

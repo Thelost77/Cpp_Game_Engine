@@ -3,9 +3,9 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**",
+                // "${workspaceFolder}/**",
                 "${workspaceFolder}/src",
-                "C:\\\\libraries\\\\SFML-2.5.1\\\\include",
+                // "C:\\\\libraries\\\\SFML-2.5.1\\\\include",
                 "${workspaceFolder}/src/imGui"
             ],
             "defines": [
