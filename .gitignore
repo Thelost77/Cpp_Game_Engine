@@ -365,3 +365,7 @@ FodyWeavers.xsd
 imgui.ini
 
 bin/
+
+.DS_Store
+
+*.o
