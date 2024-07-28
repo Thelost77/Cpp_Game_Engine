@@ -111,6 +111,7 @@
       <PreprocessorDefinitions>SFML_STATIC;SFML_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\libraries\SFML-2.5.1\include;$(SolutionDir)\src\imGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,6 +137,7 @@
       <PreprocessorDefinitions>SFML_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\libraries\SFML-2.5.1\include;$(SolutionDir)\src\imGui</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -155,14 +157,22 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Entity.cpp" />
+    <ClCompile Include="src\EntityManager.cpp" />
+    <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\imGui\imgui-SFML.cpp" />
     <ClCompile Include="src\imGui\imgui.cpp" />
     <ClCompile Include="src\imGui\imgui_draw.cpp" />
     <ClCompile Include="src\imGui\imgui_tables.cpp" />
     <ClCompile Include="src\imGui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Components.h" />
+    <ClInclude Include="src\Entity.h" />
+    <ClInclude Include="src\EntityManager.h" />
+    <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\imGui\imconfig-SFML.h" />
     <ClInclude Include="src\imGui\imconfig.h" />
     <ClInclude Include="src\imGui\imgui-SFML.h" />
@@ -172,6 +182,7 @@
     <ClInclude Include="src\imGui\imstb_rectpack.h" />
     <ClInclude Include="src\imGui\imstb_textedit.h" />
     <ClInclude Include="src\imGui\imstb_truetype.h" />
+    <ClInclude Include="src\Vector2.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
