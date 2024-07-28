@@ -2,6 +2,8 @@
 #include <memory>
 #include <string>
 
+#ifndef ENTITY_H
+#define ENTITY_H
 class Entity
 {
     friend class EntityManager;
@@ -10,9 +12,10 @@ class Entity
     std::string m_tag = "default";
 
     // constructor and destructor
-    Entity(const size_t id, const std::string &tag);
+    
 
 public:
+    Entity(const size_t id, const std::string &tag);
     // conponent pointers
     std::shared_ptr<CTransform> cTransform;
     std::shared_ptr<CShape> cShape;
@@ -27,3 +30,5 @@ public:
     const size_t id() const;
     void destroy();
 };
+
+#endif // ENTITY_H

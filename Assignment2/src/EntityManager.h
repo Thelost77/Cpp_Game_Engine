@@ -1,9 +1,13 @@
 #include "Entity.h"
+#include <string>
 #include <vector>
 #include <map>
 
 typedef std::vector<std::shared_ptr<Entity>> EntityVec;
 typedef std::map<std::string, EntityVec> EntityMap;
+
+#ifndef ENTITYMANAGER_H
+#define ENTITYMANAGER_H
 
 class EntityManager
 {
@@ -25,3 +29,5 @@ public:
     const EntityVec &getEntities(const std::string &tag);
     const std::map<std::string, EntityVec>& getEntityMap();
 };
+
+#endif // ENTITYMANAGER_H

@@ -1,6 +1,7 @@
-#include <Vector2.h>
+#include "Vector2.h"
 #include <SFML/Graphics.hpp>
 
+#ifndef COMPONENTS_H
 class CTransform
 {
 public:
@@ -56,3 +57,6 @@ public:
     bool right = false;
     bool shoot = false;
 };
+
+#define COMPONENTS_H
+#endif

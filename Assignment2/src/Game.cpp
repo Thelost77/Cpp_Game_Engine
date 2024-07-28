@@ -1,20 +1,66 @@
 #include "Game.h"
 #include <iostream>
+#include <fstream>
 #include "imgui-SFML.h"
 #include "Components.h"
 #include "Vector2.h"
 
-Game::Game(const std::string &config)
+Game::Game(const std::string &config, const std::string &font)
 {
-    init(config);
+    init(config, font);
 }
 
-void Game::init(const std::string &config)
+void Game::init(const std::string &config, const std::string &font)
 {
-    // Read all config from file
+    std::ifstream fin(config);
+    if (!fin)
+    {
+        std::cerr << "Error opening file\n";
+        exit(-1);
+    }
 
-    m_window.create(sf::VideoMode(1280, 720), "Assignment2");
-    m_window.setFramerateLimit(60);
+    std::string configType;
+    while (fin >> configType)
+    {
+        if (configType == "Window")
+        {
+            int wWidth, wHeight, frames, isWindowed;
+            fin >> wWidth >> wHeight >> frames >> isWindowed;
+
+            auto style = isWindowed ? sf::Style::Default : sf::Style::Fullscreen;
+
+            m_window.create(sf::VideoMode(wWidth, wHeight), "Assignment2", style);
+            m_window.setFramerateLimit(frames);
+    
+        }
+        if (configType == "Font")
+        {
+            std::string fontPath;
+            fin >> fontPath;
+            if (!m_font.loadFromFile(font + fontPath))
+            {
+                std::cerr << "Error loading font\n";
+                exit(-1);
+            }
+            int textSize, r, g, b;
+            fin >> textSize >> r >> g >> b;
+            auto textColor = sf::Color(r, g, b);
+            m_text = sf::Text("", m_font, textSize);
+            m_text.setFillColor(textColor);
+
+        }
+        if (configType == "Player")
+        {
+            fin >> m_playerConfig.SR >> m_playerConfig.CR >> m_playerConfig.FR >> m_playerConfig.FG >> m_playerConfig.FB >> m_playerConfig.OR >> m_playerConfig.OG >> m_playerConfig.OB >> m_playerConfig.OT >> m_playerConfig.V >> m_playerConfig.S >> m_playerConfig.L;
+        }
+        if (configType == "Enemy")
+        {
+            fin >> m_enemyConfig.SR >> m_enemyConfig.CR >> m_enemyConfig.OR >> m_enemyConfig.OG >> m_enemyConfig.OB >> m_enemyConfig.OT >> m_enemyConfig.VMIN >> m_enemyConfig.VMAX >> m_enemyConfig.L >> m_enemyConfig.SMIN >> m_enemyConfig.SMAX >> m_enemyConfig.SI;
+        }
+        if (configType == "Bullet") {
+            fin >> m_bulletConfig.SR >> m_bulletConfig.CR >> m_bulletConfig.FR >> m_bulletConfig.FG >> m_bulletConfig.FB >> m_bulletConfig.OR >> m_bulletConfig.OG >> m_bulletConfig.OB >> m_bulletConfig.OT >> m_bulletConfig.V >> m_bulletConfig.L >> m_bulletConfig.S;
+        }
+    }
 
     ImGui::SFML::Init(m_window);
 
@@ -25,13 +71,13 @@ void Game::run()
 {
     while (m_running)
     {
-        m_entites.update();
+        m_entities.update();
 
         ImGui::SFML::Update(m_window, m_deltaClock.restart());
 
         sEnemySpawner();
-        sMovement();
         sCollision();
+        sMovement();
         sUserInput();
         sGUI();
         sRender();
@@ -52,16 +98,15 @@ void Game::spawnPlayer()
     auto entity = m_entities.addEntity("player");
 
     // Give this entity a Transform so it spawns at (200,200) with velocity (1,1) and angle 0
-    entity->cTransform = std::make_shared<CTransform>(Vector2(200.0f, 200.0f), Vector2(1.0f, 1.0f), 0.0f);
+    entity->cTransform = std::make_shared<CTransform>(Vector2(200.0f, 200.0f), Vector2(10.0f, 10.0f), 0.0f);
 
     // The entity's shape will have radius 32, 8 sides, dark grey fill, and red outline of thickness u
-    entity->cShape = std::make_shared<CShape>(32.0f, 8, sf::Color(10, 10, 10), sf::Color(255, 0, 0), 0.0f);
+    entity->cShape = std::make_shared<CShape>(32.0f, 8, sf::Color::Blue, sf::Color(255, 0, 0), 0.5f);
     // Add an input component to the player so that we can use inputs
 
     entity->cInput = std::make_shared<CInput>();
 
     // Since we want this Entity to be our player, set our Game's player variable to be this Entity
-
     // This goes slightly against the EntityManager paradigm, but we use the player so much it's worth it
     m_player = entity;
 }
@@ -87,7 +132,7 @@ void Game::spawnSmallEnemies(std::shared_ptr<Entity> e)
 }
 
 // spawns a bullet from a given entity to a target location
-void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vec2 &target)
+void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vector2 &target)
 {
     // TODO: implement the spawning of a bullet which travels toward target
     // ~ bullet speed is given as a scalar speed
@@ -107,8 +152,8 @@ void Game::sMovement()
     // ydp should read the m_player->cInput component to determine if the player is moving
 
     // Sample movement speed update
-    m_player->cTransform->pos.x += m_player— > cTransform— > velocity.x;
-    m_player->cTransform— > pos.y += m_player->cTransform— > velocity.y;
+    m_player->cTransform->position.x += m_player->cTransform->velocity.x;
+    m_player->cTransform->position.y += m_player->cTransform->velocity.y;
 }
 
 void Game::sLifespan()
@@ -128,6 +173,24 @@ void Game::sLifespan()
 
 void Game::sCollision()
 {
+    for (auto& e: m_entities.getEntities()) 
+    {
+        const sf::FloatRect& globalBounds = e->cShape->circle.getGlobalBounds();
+        auto windowSize = m_window.getSize();
+        if (globalBounds.left <= 0 || globalBounds.left + globalBounds.width >= windowSize.x)
+        {
+            e->cTransform->velocity.x *= -1;
+        }
+        if (globalBounds.top <= 0 || globalBounds.top + globalBounds.height >= windowSize.y)
+        {
+            e->cTransform->velocity.y *= -1;
+        }
+        // for (auto& e2: m_entities.getEntities()) 
+        // {
+        //     if (e == e2) { continue; }
+
+        // }
+    }
     // TODO: implement all proper collisions between entities
     // be sure to use the collision radius, NOT the shape radius
 }
@@ -140,7 +203,7 @@ void Game::sEnemySpawner()
 void Game::sGUI()
 {
     ImGui::Begin("Geometry Wars");
-    ImGui::Text("Stuff Goes Here") j
+    ImGui::Text("Stuff Goes Here");
     ImGui::End();
 }
 
@@ -152,7 +215,8 @@ void Game::sRender()
     m_window.clear();
 
     // set the position of the shape based on the entity's transform->pos
-    m_player->cShape->circle.setPosition(m_player->cTransform->pos.x, m_player->cTransform->pos.y);
+
+    m_player->cShape->circle.setPosition(m_player->cTransform->position.x, m_player->cTransform->position.y);
 
     // set the rotation of the shape based on the entity's transform->angle
     m_player->cTransform->angle += 1.0f;
@@ -174,7 +238,7 @@ void Game::sUserInput()
     // you should not implement the player's movement logic here
     // the movement system will read the variables you set in this function
     sf::Event event;
-    while (m_window.pollEventCevent)
+    while (m_window.pollEvent(event))
     {
         // pass the event to imgui to be parsed
         ImGui::SFML::ProcessEvent(m_window, event);
@@ -188,23 +252,29 @@ void Game::sUserInput()
         if (event.type == sf::Event::KeyPressed)
         {
             switch (event.key.code)
-            case sf::Keyboard::W:
-                std::cout < "W Key Pressed\n";
-                // TODO: set player's input component "up" to true
-            break;
-            default:
-            break;
+            {
+                case sf::Keyboard::W:
+                    std::cout << "W Key Pressed\n";
+                    // TODO: set player's input component "up" to true
+                    break;
+                default:
+                    std::cout << "Key Pressed\n";
+                    break;
+            }
         }
         
         if (event.type == sf::Event::KeyReleased)
         {
             switch (event.key.code)
-            case sf::Keyboard::W:
-                std::cout < "W Key Released\n";
-                // TODO: set player's input component "up" to false
-            break;
-            default:
-            break;
+            {
+                case sf::Keyboard::W:
+                    std::cout << "W Key Released\n";
+                    // TODO: set player's input component "up" to false
+                    break;
+                default:
+                    ;
+                    break;
+            }
         }
 
         if (event.type == sf::Event::MouseButtonPressed)

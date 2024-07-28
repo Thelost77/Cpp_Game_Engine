@@ -10,18 +10,6 @@
 //     bool visible = true;
 //     float speedX, speedY;
 
-//     void checkBounce(int windowWidth, int windowHeight)
-//     {
-//         const sf::FloatRect& globalBounds = shape->getGlobalBounds();
-//         if (globalBounds.left <= 0 || globalBounds.left + globalBounds.width >= windowWidth)
-//         {
-//             speedX = -speedX;
-//         }
-//         if (globalBounds.top <= 0 || globalBounds.top + globalBounds.height >= windowHeight)
-//         {
-//             speedY = -speedY;
-//         }
-//     }
 
 //     void move()
 //     {
@@ -190,21 +178,20 @@
 //     return 0;
 // }
 
-#include <SFML/Graphics.hpp>
 #include "Game.h"
 
 // Should be updated to the correct paths when first used
 // Windows
-#define FONT_PATH "C:\\Projekty\\Cpp_Game_Engine\\Cpp_Game_Engine\\src\\resources\\fonts\\"
-#define CONFIG_PATH "C:\\Projekty\\Cpp_Game_Engine\\Cpp_Game_Engine\\src\\resources\\config.txt"
+// #define FONT_PATH "C:\\Projekty\\Cpp_Game_Engine\\Cpp_Game_Engine\\src\\resources\\fonts\\"
+// #define CONFIG_PATH "C:\\Projekty\\Cpp_Game_Engine\\Cpp_Game_Engine\\src\\resources\\config.txt"
 
 // Mac
-// #define FONT_PATH "/Users/wiktorziebka/Projects/Cpp_Game_Engine/src/resources/fonts/"
-// #define CONFIG_PATH "/Users/wiktorziebka/Projects/Cpp_Game_Engine/src/resources/config.txt"
+#define FONT_PATH "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/resources/fonts/"
+#define CONFIG_PATH "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/resources/config.txt"
 
 
 int main()
 {
-    Game g{&CONFIG_PATH};
+    Game g{CONFIG_PATH, FONT_PATH};
     g.run();
 }
