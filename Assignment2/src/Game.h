@@ -41,7 +41,7 @@ class Game
     int                     m_lastEnemySpawnTime = 0;
     int                     m_enemySpawnerTime = 60;
     int                     m_specialWeaponCooldown = 60 * 3;
-    int                     m_lastEnemySpecialWeaponTime = 0;
+    int                     m_lastSpecialWeaponTime = -100000;
     bool                    m_paused = false; // whether we update game logic
     bool                    m_running = true; // whether the game is running
     std::shared_ptr<Entity> m_player;

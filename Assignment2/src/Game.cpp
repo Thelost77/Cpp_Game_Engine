@@ -97,7 +97,8 @@ void Game::run()
         sGUI();
         sRender();
 
-        m_currentFrame++;
+        if (!m_paused)
+            m_currentFrame++;
     }
 }
 
@@ -166,8 +167,8 @@ void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vector2 &mousePosit
 
 void Game::spawnSpecialWeapon(std::shared_ptr<Entity> entity, const Vector2 &mousePosition)
 {
-    if (m_currentFrame - m_lastEnemySpecialWeaponTime < m_specialWeaponCooldown) { return; }
-    m_lastEnemySpecialWeaponTime = m_currentFrame;
+    if (m_currentFrame - m_lastSpecialWeaponTime < m_specialWeaponCooldown) { return; }
+    m_lastSpecialWeaponTime = m_currentFrame;
 
     auto d = entity->cTransform->position - mousePosition;
     d.normalize();
@@ -416,7 +417,7 @@ void Game::sGUI()
                         spawnPlayer();
                     }
                     ImGui::SameLine();
-                    ImGui::Text("%d", m_player->id());
+                    ImGui::Text("%zu", m_player->id());
                     ImGui::SameLine();
                     ImGui::Text(PLAYER);
                     ImGui::SameLine();
@@ -433,7 +434,7 @@ void Game::sGUI()
                             spawnSmallEnemies(e);
                         }
                         ImGui::SameLine();
-                        ImGui::Text("%d", e->id());
+                        ImGui::Text("%zu", e->id());
                         ImGui::SameLine();
                         ImGui::Text(ENEMY);
                         ImGui::SameLine();
@@ -451,7 +452,7 @@ void Game::sGUI()
                             spawnSmallEnemies(e);
                         }
                         ImGui::SameLine();
-                        ImGui::Text("%d", e->id());
+                        ImGui::Text("%zu", e->id());
                         ImGui::SameLine();
                         ImGui::Text(ENEMY);
                         ImGui::SameLine();
@@ -469,7 +470,7 @@ void Game::sGUI()
                             spawnSmallEnemies(e);
                         }
                         ImGui::SameLine();
-                        ImGui::Text("%d", e->id());
+                        ImGui::Text("%zu", e->id());
                         ImGui::SameLine();
                         ImGui::Text(ENEMY);
                         ImGui::SameLine();
@@ -490,7 +491,7 @@ void Game::sRender()
     if (!isRenderActive) { return; }
     m_window.clear();
     m_text.setString("SCORE: " + std::to_string(m_score));
-    auto cooldown = std::ceil(float(m_specialWeaponCooldown - (m_currentFrame - m_lastEnemySpecialWeaponTime))/60);
+    auto cooldown = std::ceil(float(m_specialWeaponCooldown - (m_currentFrame - m_lastSpecialWeaponTime))/60);
     cooldown = cooldown < 0 ? 0 : cooldown;
     m_textSpecialWeapon.setString("Cooldown: " + std::to_string(int(cooldown)) + " seconds");
     m_window.draw(m_text);
@@ -520,7 +521,7 @@ void Game::sRender()
 void Game::sUserInput()
 {
     sf::Event event;
-    if (m_paused || !isUserInputActive) { return; }
+    if (!isUserInputActive) { return; }
     while (m_window.pollEvent(event))
     {
         // pass the event to imgui to be parsed
@@ -609,7 +610,7 @@ void Game::sUserInput()
         if (event.type == sf::Event::MouseButtonPressed)
         {
             // this line ignores mouse events if ImGui is the thing being clicked
-            if (ImGui::GetIO().WantCaptureMouse) { continue; }
+            if (ImGui::GetIO().WantCaptureMouse || m_paused) { continue; }
 
             if (event.mouseButton.button == sf::Mouse::Left)
             {
