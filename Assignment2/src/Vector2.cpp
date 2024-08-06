@@ -27,6 +27,19 @@ Vector2 &Vector2::normalize()
     return *this;
 }
 
+Vector2 &Vector2::perpendicular()
+{
+    float temp = x;
+    x = -y;
+    y = temp;
+    return *this;
+}
+
+Vector2 Vector2::clone()
+{
+    return Vector2(x, y);
+}
+
 Vector2 Vector2::operator+(const Vector2 &other) const
 {
     return Vector2(x + other.x, y + other.y);

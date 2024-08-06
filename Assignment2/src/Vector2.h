@@ -11,6 +11,8 @@ public:
     Vector2& add(Vector2 &other);
     Vector2& scale(float scalar);
     Vector2& normalize();
+    Vector2& perpendicular();
+    Vector2 clone();
 
     bool operator==(const Vector2 &other) const;
     bool operator!=(const Vector2 &other) const;

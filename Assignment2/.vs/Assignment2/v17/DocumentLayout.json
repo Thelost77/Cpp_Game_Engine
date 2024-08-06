@@ -7,12 +7,20 @@
       "RelativeMoniker": "D:0:0:{DC0E0A25-5DC8-4FC8-8AF5-F4E7F4245AA6}|Assignment2.vcxproj|solutionrelative:src\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{DC0E0A25-5DC8-4FC8-8AF5-F4E7F4245AA6}|Assignment2.vcxproj|C:\\Projekty\\Cpp_Game_Engine\\Assignment2\\src\\Vector2.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{DC0E0A25-5DC8-4FC8-8AF5-F4E7F4245AA6}|Assignment2.vcxproj|solutionrelative:src\\Vector2.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{DC0E0A25-5DC8-4FC8-8AF5-F4E7F4245AA6}|Assignment2.vcxproj|C:\\Projekty\\Cpp_Game_Engine\\Assignment2\\src\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{DC0E0A25-5DC8-4FC8-8AF5-F4E7F4245AA6}|Assignment2.vcxproj|solutionrelative:src\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{DC0E0A25-5DC8-4FC8-8AF5-F4E7F4245AA6}|Assignment2.vcxproj|C:\\Projekty\\Cpp_Game_Engine\\Assignment2\\src\\EntityManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{DC0E0A25-5DC8-4FC8-8AF5-F4E7F4245AA6}|Assignment2.vcxproj|solutionrelative:src\\EntityManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DC0E0A25-5DC8-4FC8-8AF5-F4E7F4245AA6}|Assignment2.vcxproj|C:\\Projekty\\Cpp_Game_Engine\\Assignment2\\src\\Vector2.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{DC0E0A25-5DC8-4FC8-8AF5-F4E7F4245AA6}|Assignment2.vcxproj|solutionrelative:src\\Vector2.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,30 +30,55 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
+              "Title": "Vector2.h",
+              "DocumentMoniker": "C:\\Projekty\\Cpp_Game_Engine\\Assignment2\\src\\Vector2.h",
+              "RelativeDocumentMoniker": "src\\Vector2.h",
+              "ToolTip": "C:\\Projekty\\Cpp_Game_Engine\\Assignment2\\src\\Vector2.h",
+              "RelativeToolTip": "src\\Vector2.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAAwAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-08-05T10:29:20.977Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Vector2.cpp",
+              "DocumentMoniker": "C:\\Projekty\\Cpp_Game_Engine\\Assignment2\\src\\Vector2.cpp",
+              "RelativeDocumentMoniker": "src\\Vector2.cpp",
+              "ToolTip": "C:\\Projekty\\Cpp_Game_Engine\\Assignment2\\src\\Vector2.cpp",
+              "RelativeToolTip": "src\\Vector2.cpp",
+              "ViewState": "AQIAAAYAAAAAAAAAAAApwCIAAAARAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-08-05T10:28:58.592Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "EntityManager.cpp",
               "DocumentMoniker": "C:\\Projekty\\Cpp_Game_Engine\\Assignment2\\src\\EntityManager.cpp",
               "RelativeDocumentMoniker": "src\\EntityManager.cpp",
               "ToolTip": "C:\\Projekty\\Cpp_Game_Engine\\Assignment2\\src\\EntityManager.cpp",
               "RelativeToolTip": "src\\EntityManager.cpp",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABUAAAAFAAAA",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAACIAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-07-28T10:14:22.932Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "main.cpp",
               "DocumentMoniker": "C:\\Projekty\\Cpp_Game_Engine\\Assignment2\\src\\main.cpp",
               "RelativeDocumentMoniker": "src\\main.cpp",
               "ToolTip": "C:\\Projekty\\Cpp_Game_Engine\\Assignment2\\src\\main.cpp",
               "RelativeToolTip": "src\\main.cpp",
-              "ViewState": "AQIAAKUAAAAAAAAAAAAAALcAAAAKAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-07-28T10:13:03.137Z",
               "EditorCaption": ""
@@ -58,7 +91,7 @@
               "RelativeDocumentMoniker": "src\\Game.cpp",
               "ToolTip": "C:\\Projekty\\Cpp_Game_Engine\\Assignment2\\src\\Game.cpp",
               "RelativeToolTip": "src\\Game.cpp",
-              "ViewState": "AQIAAC0AAAAAAAAAAAAAAEoAAAAAAAAA",
+              "ViewState": "AQIAANMBAAAAAAAAAAApwOkBAAAkAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-07-28T10:13:01.986Z",
               "EditorCaption": ""

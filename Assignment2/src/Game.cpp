@@ -1,9 +1,16 @@
 #include "Game.h"
 #include <iostream>
 #include <fstream>
+#include <cmath>
 #include "imgui-SFML.h"
 #include "Components.h"
 #include "Vector2.h"
+
+#define BULLET "Bullet"
+#define ENEMY "Enemy"
+#define SMALL_ENEMY "Small Enemy"
+#define PLAYER "Player"
+#define PI 3.14159265359
 
 Game::Game(const std::string &config, const std::string &font)
 {
@@ -12,6 +19,7 @@ Game::Game(const std::string &config, const std::string &font)
 
 void Game::init(const std::string &config, const std::string &font)
 {
+    srand(time(NULL));
     std::ifstream fin(config);
     if (!fin)
     {
@@ -45,25 +53,31 @@ void Game::init(const std::string &config, const std::string &font)
             int textSize, r, g, b;
             fin >> textSize >> r >> g >> b;
             auto textColor = sf::Color(r, g, b);
-            m_text = sf::Text("", m_font, textSize);
+            m_text = sf::Text("SCORE: ", m_font, textSize);
+            m_text.setPosition(10, 10);
             m_text.setFillColor(textColor);
+            m_textSpecialWeapon = sf::Text("", m_font, textSize);
+            m_textSpecialWeapon.setPosition(10, 50);
+            m_textSpecialWeapon.setFillColor(textColor);
 
         }
-        if (configType == "Player")
+        if (configType == PLAYER)
         {
-            fin >> m_playerConfig.SR >> m_playerConfig.CR >> m_playerConfig.FR >> m_playerConfig.FG >> m_playerConfig.FB >> m_playerConfig.OR >> m_playerConfig.OG >> m_playerConfig.OB >> m_playerConfig.OT >> m_playerConfig.V >> m_playerConfig.S >> m_playerConfig.L;
+            fin >> m_playerConfig.SR >> m_playerConfig.CR >> m_playerConfig.S >> m_playerConfig.FR >> m_playerConfig.FG >> m_playerConfig.FB >> m_playerConfig.OR >> m_playerConfig.OG >> m_playerConfig.OB >> m_playerConfig.OT >> m_playerConfig.V;
         }
-        if (configType == "Enemy")
+        if (configType == ENEMY)
         {
-            fin >> m_enemyConfig.SR >> m_enemyConfig.CR >> m_enemyConfig.OR >> m_enemyConfig.OG >> m_enemyConfig.OB >> m_enemyConfig.OT >> m_enemyConfig.VMIN >> m_enemyConfig.VMAX >> m_enemyConfig.L >> m_enemyConfig.SMIN >> m_enemyConfig.SMAX >> m_enemyConfig.SI;
+            fin >> m_enemyConfig.SR >> m_enemyConfig.CR >> m_enemyConfig.SMIN >> m_enemyConfig.SMAX >> m_enemyConfig.OR >> m_enemyConfig.OG >> m_enemyConfig.OB >> m_enemyConfig.OT >> m_enemyConfig.VMIN >> m_enemyConfig.VMAX >> m_enemyConfig.L >> m_enemyConfig.SI;
+            m_enemySpawnerTime = m_enemyConfig.SI;
         }
-        if (configType == "Bullet") {
-            fin >> m_bulletConfig.SR >> m_bulletConfig.CR >> m_bulletConfig.FR >> m_bulletConfig.FG >> m_bulletConfig.FB >> m_bulletConfig.OR >> m_bulletConfig.OG >> m_bulletConfig.OB >> m_bulletConfig.OT >> m_bulletConfig.V >> m_bulletConfig.L >> m_bulletConfig.S;
+        if (configType == BULLET) {
+            fin >> m_bulletConfig.SR >> m_bulletConfig.CR >> m_bulletConfig.S >> m_bulletConfig.FR >> m_bulletConfig.FG >> m_bulletConfig.FB >> m_bulletConfig.OR >> m_bulletConfig.OG >> m_bulletConfig.OB >> m_bulletConfig.OT >> m_bulletConfig.V >> m_bulletConfig.L;
         }
     }
 
     ImGui::SFML::Init(m_window);
 
+    createBackgroundImage();
     spawnPlayer();
 }
 
@@ -76,6 +90,7 @@ void Game::run()
         ImGui::SFML::Update(m_window, m_deltaClock.restart());
 
         sEnemySpawner();
+        sLifespan();
         sCollision();
         sMovement();
         sUserInput();
@@ -95,13 +110,14 @@ void Game::spawnPlayer()
 {
     // We create every entity by calling EntityManager.addEntity(tag) —
     // This returns a std::shared_ptr<Entity>, so we use 'auto' to save typing _
-    auto entity = m_entities.addEntity("player");
+    auto entity = m_entities.addEntity(PLAYER);
 
-    // Give this entity a Transform so it spawns at (200,200) with velocity (1,1) and angle 0
-    entity->cTransform = std::make_shared<CTransform>(Vector2(200.0f, 200.0f), Vector2(10.0f, 10.0f), 0.0f);
+    entity->cTransform = std::make_shared<CTransform>(Vector2(m_window.getSize().x/2, m_window.getSize().y/2), Vector2(m_playerConfig.S, m_playerConfig.S), 0.0f);
+
+    entity->cCollision = std::make_shared<CCollision>(m_playerConfig.CR);
 
     // The entity's shape will have radius 32, 8 sides, dark grey fill, and red outline of thickness u
-    entity->cShape = std::make_shared<CShape>(32.0f, 8, sf::Color::Blue, sf::Color(255, 0, 0), 0.5f);
+    entity->cShape = std::make_shared<CShape>(m_playerConfig.SR, m_playerConfig.V, sf::Color(m_playerConfig.FR, m_playerConfig.FG, m_playerConfig.FB), sf::Color(m_playerConfig.OR, m_playerConfig.OG, m_playerConfig.OB), m_playerConfig.OT);
     // Add an input component to the player so that we can use inputs
 
     entity->cInput = std::make_shared<CInput>();
@@ -111,119 +127,389 @@ void Game::spawnPlayer()
     m_player = entity;
 }
 
-void Game::spawnEnemy()
-{
-    // TODO: make sure the enemy is spawned properly with the m_enemyConfig variables
-    // the enemy must be spawned completely within the bounds of the window
-    //
-    // record when the most recent enemy was spawned
-    m_lastEnemySpawnTime = m_currentFrame;
-}
-
 // spawns the small enemies when a big one (input entity e) explodes
 void Game::spawnSmallEnemies(std::shared_ptr<Entity> e)
 {
+    auto vertices = e->cShape->circle.getPointCount();
+    auto angle = 2 * PI / vertices;
 
-    // TODO: spawn small enemies at the location of the input enemy e
-    // when we create the smaller enemy, we have to read the values of the original enemy
-    // - spawn a number of small enemies equal to the vertices of the original enemy
-    // ~ set each small enemy to the same color as the original, half the size
-    // - small enemies are worth double points of the original enemy
+    for (int i = 0; i < vertices; i++)
+    {
+        auto smallEnemy = m_entities.addEntity(SMALL_ENEMY);
+        auto position = e->cTransform->position;
+        auto velocity = e->cTransform->velocity;
+        auto enemyVelocity = Vector2(std::cos(angle * i) * velocity.x, std::sin(angle * i) * velocity.y);
+        smallEnemy->cTransform = std::make_shared<CTransform>(position, enemyVelocity, 0.0f);
+        smallEnemy->cCollision = std::make_shared<CCollision>(m_enemyConfig.CR / 2);
+        smallEnemy->cShape = std::make_shared<CShape>(m_enemyConfig.SR / 2, vertices, sf::Color(e->cShape->circle.getFillColor()), sf::Color(m_enemyConfig.OR, m_enemyConfig.OG, m_enemyConfig.OB), m_enemyConfig.OT);
+        smallEnemy->cScore = std::make_shared<CScore>(vertices * 2);
+        smallEnemy->cLifespan = std::make_shared<CLifespan>(m_enemyConfig.L);
+    }
 }
 
 // spawns a bullet from a given entity to a target location
-void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vector2 &target)
+void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vector2 &mousePosition)
 {
-    // TODO: implement the spawning of a bullet which travels toward target
-    // ~ bullet speed is given as a scalar speed
+    auto d = entity->cTransform->position - mousePosition;
+    d.normalize();
+    auto bulletVelocity = d * m_bulletConfig.S;
+    auto bullet = m_entities.addEntity(BULLET);
 
-    // _ you must set the velocity by using formula in notes I
+    bullet->cTransform = std::make_shared<CTransform>(entity->cTransform->position.clone(), bulletVelocity, 0.0f);
+
+    bullet->cCollision = std::make_shared<CCollision>(m_bulletConfig.CR);
+
+    bullet->cShape = std::make_shared<CShape>(m_bulletConfig.SR, m_bulletConfig.V, sf::Color(m_bulletConfig.FR, m_bulletConfig.FG, m_bulletConfig.FB), sf::Color(m_bulletConfig.OR, m_bulletConfig.OG, m_bulletConfig.OB), m_bulletConfig.OT);
+
+    bullet->cLifespan = std::make_shared<CLifespan>(m_bulletConfig.L);
 }
 
-void Game::spawnSpecialWeapon(std::shared_ptr<Entity> entity)
+void Game::spawnSpecialWeapon(std::shared_ptr<Entity> entity, const Vector2 &mousePosition)
 {
-    // TODO: implement your own special weapon
+    if (m_currentFrame - m_lastEnemySpecialWeaponTime < m_specialWeaponCooldown) { return; }
+    m_lastEnemySpecialWeaponTime = m_currentFrame;
+
+    auto d = entity->cTransform->position - mousePosition;
+    d.normalize();
+    auto flameVelocity = d * 10;
+    int flameHeight = 100;
+    int radius = 2;
+    auto sqrt3 = std::sqrt(3);
+
+    auto upColor = sf::Color(255, 0, 0);
+    auto middleColor = sf::Color(255, 165, 0);
+    auto downColor = sf::Color(255, 255, 0);
+
+    for (int i = 0; i <= flameHeight; i += radius * 2)
+    {
+        auto flameBaseMiddlePoint = (d * -i) + entity->cTransform->position + (d * entity->cCollision->radius * 2);
+        auto perpendicular = flameBaseMiddlePoint.clone().scale(-1).perpendicular().normalize();
+        for (int j = 0; j < sqrt3 * i / 3; j += radius * 2)
+        {
+            for (int k = -1; k < 2; k += 2)
+            {
+                auto flame = m_entities.addEntity(BULLET);
+                auto position = Vector2(flameBaseMiddlePoint.x, flameBaseMiddlePoint.y) + perpendicular * j * k;
+                flame->cTransform = std::make_shared<CTransform>(position, flameVelocity, 0.0f);
+                flame->cCollision = std::make_shared<CCollision>(radius);
+                if (i >= flameHeight * 2 / 3)
+                {
+                    flame->cShape = std::make_shared<CShape>(radius, 3, upColor, sf::Color::Black, 1);
+                }
+                else if (i >= flameHeight / 3)
+                {
+                    flame->cShape = std::make_shared<CShape>(radius, 3, middleColor, sf::Color::Black, 1);
+                }
+                else
+                {
+                    flame->cShape = std::make_shared<CShape>(radius, 3, downColor, sf::Color::Black, 1);
+                }
+                flame->cLifespan = std::make_shared<CLifespan>(m_bulletConfig.L * 3);
+            }
+            
+        }
+    }
+    
 }
 
 void Game::sMovement()
 {
-    // TODO: implement all entity movement in this function
+    if (m_paused || !isMovementActive) { return; }
+    // Player movement
+    auto sqrt2 = std::sqrt(2);
+    if (m_player->cInput->left && m_player->cInput->up)
+    {
+        m_player->cTransform->position.y -= m_player->cTransform->velocity.y / sqrt2;
+        m_player->cTransform->position.x -= m_player->cTransform->velocity.x / sqrt2;
+    }
+    else if (m_player->cInput->left && m_player->cInput->down)
+    {
+        m_player->cTransform->position.y += m_player->cTransform->velocity.y / sqrt2;
+        m_player->cTransform->position.x -= m_player->cTransform->velocity.x / sqrt2;
+    }
+    else if (m_player->cInput->right && m_player->cInput->up)
+    {
+        m_player->cTransform->position.y -= m_player->cTransform->velocity.y / sqrt2;
+        m_player->cTransform->position.x += m_player->cTransform->velocity.x / sqrt2;
+    }
+    else if (m_player->cInput->right && m_player->cInput->down)
+    {
+        m_player->cTransform->position.y += m_player->cTransform->velocity.y / sqrt2;
+        m_player->cTransform->position.x += m_player->cTransform->velocity.x / sqrt2;
+    }
+    else if (m_player->cInput->left)
+    {
+        m_player->cTransform->position.x -= m_player->cTransform->velocity.x;
+    }
+    else if (m_player->cInput->right)
+    {
+        m_player->cTransform->position.x += m_player->cTransform->velocity.x;
+    }
+    else if (m_player->cInput->down)
+    {
+        m_player->cTransform->position.y += m_player->cTransform->velocity.y;
+    }
+    else if (m_player->cInput->up)
+    {
+        m_player->cTransform->position.y -= m_player->cTransform->velocity.y;
+    }
 
-    // ydp should read the m_player->cInput component to determine if the player is moving
+    for (auto& e: m_entities.getEntities()) 
+    {
+        if (e == m_player) { continue; }
 
-    // Sample movement speed update
-    m_player->cTransform->position.x += m_player->cTransform->velocity.x;
-    m_player->cTransform->position.y += m_player->cTransform->velocity.y;
+        e->cTransform->position += e->cTransform->velocity;
+    }
+    
 }
 
 void Game::sLifespan()
 {
-
-    // TODO: implement all lifespan functionality
-    //
-    // for all entities
-    // if entity has no lifespan component, skip it
-    // if entity has > 0 remaining lifespan, subtract 1
-    // if it has lifespan and is alive
-    // scale its alpha channel properly
-
-    // if it has lifespan and its time is up
-    // destroy the entity I
+    if (!isLifespanActive) { return; }
+    for (auto &e : m_entities.getEntities())
+    {
+        if (!e->cLifespan) continue;
+        
+        e->cLifespan->remaining--;
+        if (e->cLifespan->remaining <= 0)
+        {
+            e->destroy();
+        }
+        else
+        {
+            auto alpha = 255 * e->cLifespan->remaining / e->cLifespan->total;
+            auto fillColor = e->cShape->circle.getFillColor();
+            auto outlineColor = e->cShape->circle.getOutlineColor();
+            e->cShape->circle.setFillColor(sf::Color(fillColor.r, fillColor.g, fillColor.b, alpha ));
+            e->cShape->circle.setOutlineColor(sf::Color(outlineColor.r, outlineColor.g, outlineColor.b, alpha));
+        }
+        
+    }
 }
 
 void Game::sCollision()
 {
     for (auto& e: m_entities.getEntities()) 
     {
+        // Check global bound and bounce if entity is not player
         const sf::FloatRect& globalBounds = e->cShape->circle.getGlobalBounds();
         auto windowSize = m_window.getSize();
-        if (globalBounds.left <= 0 || globalBounds.left + globalBounds.width >= windowSize.x)
-        {
-            e->cTransform->velocity.x *= -1;
+        if (e != m_player) 
+        { 
+            if (globalBounds.left <= 0 || globalBounds.left + globalBounds.width >= windowSize.x)
+            {
+                e->cTransform->velocity.x *= -1;
+            }
+            if (globalBounds.top <= 0 || globalBounds.top + globalBounds.height >= windowSize.y)
+            {
+                e->cTransform->velocity.y *= -1;
+            }    
         }
-        if (globalBounds.top <= 0 || globalBounds.top + globalBounds.height >= windowSize.y)
+        // Check if player is out of bounds and stop movement
+        else 
         {
-            e->cTransform->velocity.y *= -1;
+            if (globalBounds.left <= 0)
+            {
+                e->cInput->left = false;
+            }
+            if (globalBounds.left + globalBounds.width >= windowSize.x)
+            {
+                e->cInput->right = false;
+            }
+            if (globalBounds.top <= 0)
+            {
+                e->cInput->up = false;
+            }
+            if (globalBounds.top + globalBounds.height >= windowSize.y) 
+            {
+                e->cInput->down = false;
+            }
         }
-        // for (auto& e2: m_entities.getEntities()) 
-        // {
-        //     if (e == e2) { continue; }
 
-        // }
+        if (isCollisionActive && (e->tag() == ENEMY || e->tag() == SMALL_ENEMY) && e->isActive()) 
+        {
+            auto distanceToPlayer = m_player->cTransform->position - e->cTransform->position;
+            if (distanceToPlayer.x * distanceToPlayer.x + distanceToPlayer.y * distanceToPlayer.y <= (m_player->cCollision->radius + e->cCollision->radius) * (m_player->cCollision->radius + e->cCollision->radius))
+            {
+                e->destroy();
+                m_player->destroy();
+                m_score = 0;
+                spawnPlayer();
+                if (e->tag() == ENEMY)
+                    spawnSmallEnemies(e);
+                continue;
+            }
+
+            for (auto &bullet: m_entities.getEntities(BULLET))
+            {
+                if (!e->isActive()) { break; }
+                if (!bullet->isActive()) { continue; }
+                auto distanceToBullet = bullet->cTransform->position - e->cTransform->position;
+                if (distanceToBullet.x * distanceToBullet.x + distanceToBullet.y * distanceToBullet.y <= (bullet->cCollision->radius + e->cCollision->radius) * (bullet->cCollision->radius + e->cCollision->radius))
+                {
+                    m_score += e->cScore->score * 100;
+                    e->destroy();
+                    bullet->destroy();
+                    if (e->tag() == ENEMY)
+                        spawnSmallEnemies(e);
+                }
+            }
+        }
     }
-    // TODO: implement all proper collisions between entities
-    // be sure to use the collision radius, NOT the shape radius
 }
 
 void Game::sEnemySpawner()
 {
-    // TODO: code which implements enemy spawning should go here
+    if (m_paused || !isEnemySpawnerActive || m_currentFrame - m_lastEnemySpawnTime < m_enemySpawnerTime) { return; }
+
+    m_lastEnemySpawnTime = m_currentFrame;
+    int speedDiff = 1 + m_enemyConfig.SMAX - m_enemyConfig.SMIN;
+    auto speed = (rand() % speedDiff) + m_enemyConfig.SMIN; 
+    auto vertices = (rand() % (1 + m_enemyConfig.VMAX - m_enemyConfig.VMIN)) + m_enemyConfig.VMIN;
+    auto position = Vector2(0, 0);
+    do
+    {
+        position.x = m_enemyConfig.SR + rand() % (m_window.getSize().x - m_enemyConfig.SR);
+        position.y = m_enemyConfig.SR + rand() % (m_window.getSize().y - m_enemyConfig.SR);
+    }
+    while (((position - m_player->cTransform->position).length() < m_player->cCollision->radius * 2));
+    auto enemyVelocity = Vector2(speed, speed);
+
+    auto enemy = m_entities.addEntity(ENEMY);
+
+    enemy->cTransform = std::make_shared<CTransform>(position, enemyVelocity, 0.0f);
+
+    enemy->cCollision = std::make_shared<CCollision>(m_enemyConfig.CR);
+
+    enemy->cShape = std::make_shared<CShape>(m_enemyConfig.SR, vertices, sf::Color(rand() % 255, rand() % 255, rand() % 255), sf::Color(m_enemyConfig.OR, m_enemyConfig.OG, m_enemyConfig.OB), m_enemyConfig.OT);
+
+    enemy->cScore = std::make_shared<CScore>(vertices);
+
 }
 
 void Game::sGUI()
 {
     ImGui::Begin("Geometry Wars");
-    ImGui::Text("Stuff Goes Here");
+    if (ImGui::BeginTabBar("Geometry Wars"))
+    {
+        if (ImGui::BeginTabItem("Systems"))
+        {
+            ImGui::Checkbox("EnemySpawner", &isEnemySpawnerActive);
+            ImGui::Checkbox("Lifespan", &isLifespanActive);
+            ImGui::Checkbox("Collision", &isCollisionActive);
+            ImGui::Checkbox("Movement", &isMovementActive);
+            ImGui::Checkbox("UserInput", &isUserInputActive);
+            ImGui::Checkbox("Render", &isRenderActive);
+            ImGui::EndTabItem();
+        }
+        if (ImGui::BeginTabItem("Entities"))
+        {
+            if (ImGui::CollapsingHeader("Entites by tag")) 
+            {
+                ImGui::Indent(10);
+                if (ImGui::CollapsingHeader(PLAYER))
+                {
+                    ImGui::Indent(10);
+                    if (ImGui::Button("D"))
+                    {
+                        m_player->destroy();
+                        spawnPlayer();
+                    }
+                    ImGui::SameLine();
+                    ImGui::Text("%d", m_player->id());
+                    ImGui::SameLine();
+                    ImGui::Text(PLAYER);
+                    ImGui::SameLine();
+                    ImGui::Text("Position: (%.2f, %.2f)", m_player->cTransform->position.x, m_player->cTransform->position.y);
+                }
+                if (ImGui::CollapsingHeader(ENEMY))
+                {
+                    ImGui::Indent(10);
+                    for (auto &e: m_entities.getEntities(ENEMY))
+                    {
+                        if (ImGui::Button("D"))
+                        {
+                            e->destroy();
+                            spawnSmallEnemies(e);
+                        }
+                        ImGui::SameLine();
+                        ImGui::Text("%d", e->id());
+                        ImGui::SameLine();
+                        ImGui::Text(ENEMY);
+                        ImGui::SameLine();
+                        ImGui::Text("Position: (%.2f, %.2f)", e->cTransform->position.x, e->cTransform->position.y);
+                    }
+                }
+                if (ImGui::CollapsingHeader(BULLET))
+                {
+                    ImGui::Indent(10);
+                    for (auto &e: m_entities.getEntities(BULLET))
+                    {
+                        if (ImGui::Button("D"))
+                        {
+                            e->destroy();
+                            spawnSmallEnemies(e);
+                        }
+                        ImGui::SameLine();
+                        ImGui::Text("%d", e->id());
+                        ImGui::SameLine();
+                        ImGui::Text(ENEMY);
+                        ImGui::SameLine();
+                        ImGui::Text("Position: (%.2f, %.2f)", e->cTransform->position.x, e->cTransform->position.y);
+                    }
+                }
+                if (ImGui::CollapsingHeader(SMALL_ENEMY))
+                {
+                    ImGui::Indent(10);
+                    for (auto &e: m_entities.getEntities(SMALL_ENEMY))
+                    {
+                        if (ImGui::Button("D"))
+                        {
+                            e->destroy();
+                            spawnSmallEnemies(e);
+                        }
+                        ImGui::SameLine();
+                        ImGui::Text("%d", e->id());
+                        ImGui::SameLine();
+                        ImGui::Text(ENEMY);
+                        ImGui::SameLine();
+                        ImGui::Text("Position: (%.2f, %.2f)", e->cTransform->position.x, e->cTransform->position.y);
+                    }
+                }
+            }
+            ImGui::EndTabItem();
+        }
+        ImGui::EndTabBar();
+    }
+
     ImGui::End();
 }
 
 void Game::sRender()
 {
-
-    // TODO: change the code below to draw ALL of the entities
-    // sample drawing of the player Entity that we have created
+    if (!isRenderActive) { return; }
     m_window.clear();
+    m_text.setString("SCORE: " + std::to_string(m_score));
+    auto cooldown = std::ceil(float(m_specialWeaponCooldown - (m_currentFrame - m_lastEnemySpecialWeaponTime))/60);
+    cooldown = cooldown < 0 ? 0 : cooldown;
+    m_textSpecialWeapon.setString("Cooldown: " + std::to_string(int(cooldown)) + " seconds");
+    m_window.draw(m_text);
+    m_window.draw(m_textSpecialWeapon);
 
-    // set the position of the shape based on the entity's transform->pos
+    for (auto shape: m_backgroundShapes)
+    {
+        m_window.draw(*shape);
+    }
 
-    m_player->cShape->circle.setPosition(m_player->cTransform->position.x, m_player->cTransform->position.y);
+    for (auto& e: m_entities.getEntities())
+    {
+        e->cShape->circle.setPosition(e->cTransform->position.x, e->cTransform->position.y);
+        e->cTransform->angle += 1.0f;
+        e->cShape->circle.setRotation(e->cTransform->angle);
+        m_window.draw(e->cShape->circle);
+    }
 
-    // set the rotation of the shape based on the entity's transform->angle
-    m_player->cTransform->angle += 1.0f;
-    m_player->cShape->circle.setRotation(m_player->cTransform->angle);
-
-    // draw the entity's sf::CircleShape
-    m_window.draw(m_player->cShape->circle);
+    
 
     // draw the ui last
     ImGui::SFML::Render(m_window);
@@ -233,11 +519,8 @@ void Game::sRender()
 
 void Game::sUserInput()
 {
-    // TODO: handle user input here
-    // note that you should only be setting the players's input component variables here
-    // you should not implement the player's movement logic here
-    // the movement system will read the variables you set in this function
     sf::Event event;
+    if (m_paused || !isUserInputActive) { return; }
     while (m_window.pollEvent(event))
     {
         // pass the event to imgui to be parsed
@@ -254,11 +537,37 @@ void Game::sUserInput()
             switch (event.key.code)
             {
                 case sf::Keyboard::W:
-                    std::cout << "W Key Pressed\n";
-                    // TODO: set player's input component "up" to true
+                    m_player->cInput->up = true;
+                    break;
+                case sf::Keyboard::Up:
+                    m_player->cInput->up = true;
+                    break;
+                case sf::Keyboard::S:
+                    m_player->cInput->down = true;
+                    break;
+                case sf::Keyboard::Down:
+                    m_player->cInput->down = true;
+                    break;
+                case sf::Keyboard::D:
+                    m_player->cInput->right = true;
+                    break;
+                case sf::Keyboard::Right:
+                    m_player->cInput->right = true;
+                    break;
+                case sf::Keyboard::A:
+                    m_player->cInput->left = true;
+                    break;
+                case sf::Keyboard::Left:
+                    m_player->cInput->left = true;
+                    break;
+                case sf::Keyboard::P:
+                    m_paused = !m_paused;
+                    break;
+                case sf::Keyboard::Escape:
+                    m_running = false;
                     break;
                 default:
-                    std::cout << "Key Pressed\n";
+                    ;
                     break;
             }
         }
@@ -268,8 +577,28 @@ void Game::sUserInput()
             switch (event.key.code)
             {
                 case sf::Keyboard::W:
-                    std::cout << "W Key Released\n";
-                    // TODO: set player's input component "up" to false
+                    m_player->cInput->up = false;
+                    break;
+                case sf::Keyboard::Up:
+                    m_player->cInput->up = false;
+                    break;
+                case sf::Keyboard::S:
+                    m_player->cInput->down = false;
+                    break;
+                case sf::Keyboard::Down:
+                    m_player->cInput->down = false;
+                    break;
+                case sf::Keyboard::D:
+                    m_player->cInput->right = false;
+                    break;
+                case sf::Keyboard::Right:
+                    m_player->cInput->right = false;
+                    break;
+                case sf::Keyboard::A:
+                    m_player->cInput->left = false;
+                    break;
+                case sf::Keyboard::Left:
+                    m_player->cInput->left = false;
                     break;
                 default:
                     ;
@@ -284,13 +613,34 @@ void Game::sUserInput()
 
             if (event.mouseButton.button == sf::Mouse::Left)
             {
-                // call spawnBullet here
+                spawnBullet(m_player, Vector2(event.mouseButton.x, event.mouseButton.y));
             }
 
             if (event.mouseButton.button == sf::Mouse::Right)
             {
-                // call spawnSpecialWepon here
+                spawnSpecialWeapon(m_player, Vector2(event.mouseButton.x, event.mouseButton.y));
             }
+        }
+    }
+}
+
+void Game::createBackgroundImage() 
+{
+    auto windowSize = m_window.getSize();
+    
+    int radius = 100;
+    auto x = windowSize.x / radius;
+    auto y = windowSize.y / radius;
+
+    for (int i = 0; i <= x; i++)
+    {
+        for (int j = 0; j <= y; j++)
+        {
+            auto rgb = 255 - (255 / (x+y) * (i+j + 1));
+            auto circle = new sf::CircleShape{ (float)radius };
+            circle->setFillColor(sf::Color(rgb, rgb, rgb, 50));
+            circle->setPosition(i * radius, j * radius);
+            m_backgroundShapes.push_back(circle);
         }
     }
 }
