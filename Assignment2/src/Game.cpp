@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <memory>
 #include "imgui-SFML.h"
 #include "Components.h"
 #include "Vector2.h"
@@ -39,7 +40,7 @@ void Game::init(const std::string &config, const std::string &font)
 
             m_window.create(sf::VideoMode(wWidth, wHeight), "Assignment2", style);
             m_window.setFramerateLimit(frames);
-    
+
         }
         if (configType == "Font")
         {
@@ -57,7 +58,7 @@ void Game::init(const std::string &config, const std::string &font)
             m_text.setPosition(10, 10);
             m_text.setFillColor(textColor);
             m_textSpecialWeapon = sf::Text("", m_font, textSize);
-            m_textSpecialWeapon.setPosition(10, 50);
+            m_textSpecialWeapon.setPosition(10, 40);
             m_textSpecialWeapon.setFillColor(textColor);
 
         }
@@ -170,9 +171,9 @@ void Game::spawnSpecialWeapon(std::shared_ptr<Entity> entity, const Vector2 &mou
     if (m_currentFrame - m_lastSpecialWeaponTime < m_specialWeaponCooldown) { return; }
     m_lastSpecialWeaponTime = m_currentFrame;
 
-    auto d = entity->cTransform->position - mousePosition;
-    d.normalize();
-    auto flameVelocity = d * 10;
+    auto dir = entity->cTransform->position - mousePosition;
+    dir.normalize();
+    auto flameVelocity = dir * 10;
     int flameHeight = 100;
     int radius = 2;
     auto sqrt3 = std::sqrt(3);
@@ -181,36 +182,76 @@ void Game::spawnSpecialWeapon(std::shared_ptr<Entity> entity, const Vector2 &mou
     auto middleColor = sf::Color(255, 165, 0);
     auto downColor = sf::Color(255, 255, 0);
 
-    for (int i = 0; i <= flameHeight; i += radius * 2)
-    {
-        auto flameBaseMiddlePoint = (d * -i) + entity->cTransform->position + (d * entity->cCollision->radius * 2);
-        auto perpendicular = flameBaseMiddlePoint.clone().scale(-1).perpendicular().normalize();
-        for (int j = 0; j < sqrt3 * i / 3; j += radius * 2)
+
+    int i = flameHeight;
+    while (i >= radius * 2) {
+        auto middlePoint = entity->cTransform->position + dir * i;
+        auto perpendicular = middlePoint.clone().perpendicular().normalize();
+        auto flameWidth = std::ceil(sqrt3 * i / 2);
+
+        while (flameWidth >= radius * 2)
         {
-            for (int k = -1; k < 2; k += 2)
-            {
-                auto flame = m_entities.addEntity(BULLET);
-                auto position = Vector2(flameBaseMiddlePoint.x, flameBaseMiddlePoint.y) + perpendicular * j * k;
-                flame->cTransform = std::make_shared<CTransform>(position, flameVelocity, 0.0f);
-                flame->cCollision = std::make_shared<CCollision>(radius);
+
+                auto flameRight = m_entities.addEntity(BULLET);
+                auto flameLeft = m_entities.addEntity(BULLET);
+                flameRight->cTransform = std::make_shared<CTransform>(perpendicular * flameWidth / 2, flameVelocity, 0.0f);
+                flameLeft->cTransform = std::make_shared<CTransform>(perpendicular * -flameWidth / 2, flameVelocity, 0.0f);
+                flameRight->cCollision = std::make_shared<CCollision>(radius);
+                flameLeft->cCollision = std::make_shared<CCollision>(radius);
+
                 if (i >= flameHeight * 2 / 3)
                 {
-                    flame->cShape = std::make_shared<CShape>(radius, 3, upColor, sf::Color::Black, 1);
+                    flameRight->cShape = std::make_shared<CShape>(radius, 3, upColor, sf::Color::Black, 1);
+                    flameLeft->cShape = std::make_shared<CShape>(radius, 3, upColor, sf::Color::Black, 1);
                 }
                 else if (i >= flameHeight / 3)
                 {
-                    flame->cShape = std::make_shared<CShape>(radius, 3, middleColor, sf::Color::Black, 1);
+                    flameRight->cShape = std::make_shared<CShape>(radius, 3, middleColor, sf::Color::Black, 1);
+                    flameLeft->cShape = std::make_shared<CShape>(radius, 3, middleColor, sf::Color::Black, 1);
                 }
                 else
                 {
-                    flame->cShape = std::make_shared<CShape>(radius, 3, downColor, sf::Color::Black, 1);
+                    flameRight->cShape = std::make_shared<CShape>(radius, 3, downColor, sf::Color::Black, 1);
+                    flameLeft->cShape = std::make_shared<CShape>(radius, 3, downColor, sf::Color::Black, 1);
                 }
-                flame->cLifespan = std::make_shared<CLifespan>(m_bulletConfig.L * 3);
-            }
-            
+                flameRight->cLifespan = std::make_shared<CLifespan>(m_bulletConfig.L * 3);
+                flameLeft->cLifespan = std::make_shared<CLifespan>(m_bulletConfig.L * 3);
+
         }
+        i -= 2 * radius;
+
     }
-    
+
+    /*for (int i = 0; i <= flameHeight; i += radius * 2)*/
+    /*{*/
+    /*    auto flameBaseMiddlePoint = (dir * -i) + entity->cTransform->position + (dir * entity->cCollision->radius * 2);*/
+    /*    auto perpendicular = flameBaseMiddlePoint.clone().scale(-1).perpendicular().normalize();*/
+    /*    for (int j = 0; j < sqrt3 * i / 3; j += radius * 2)*/
+    /*    {*/
+    /*        for (int k = -1; k < 2; k += 2)*/
+    /*        {*/
+    /*            auto flame = m_entities.addEntity(BULLET);*/
+    /*            auto position = Vector2(flameBaseMiddlePoint.x, flameBaseMiddlePoint.y) + perpendicular * j * k;*/
+    /*            flame->cTransform = std::make_shared<CTransform>(position, flameVelocity, 0.0f);*/
+    /*            flame->cCollision = std::make_shared<CCollision>(radius);*/
+    /*            if (i >= flameHeight * 2 / 3)*/
+    /*            {*/
+    /*                flame->cShape = std::make_shared<CShape>(radius, 3, upColor, sf::Color::Black, 1);*/
+    /*            }*/
+    /*            else if (i >= flameHeight / 3)*/
+    /*            {*/
+    /*                flame->cShape = std::make_shared<CShape>(radius, 3, middleColor, sf::Color::Black, 1);*/
+    /*            }*/
+    /*            else*/
+    /*            {*/
+    /*                flame->cShape = std::make_shared<CShape>(radius, 3, downColor, sf::Color::Black, 1);*/
+    /*            }*/
+    /*            flame->cLifespan = std::make_shared<CLifespan>(m_bulletConfig.L * 3);*/
+    /*        }*/
+    /**/
+    /*    }*/
+    /*}*/
+
 }
 
 void Game::sMovement()
@@ -255,13 +296,13 @@ void Game::sMovement()
         m_player->cTransform->position.y -= m_player->cTransform->velocity.y;
     }
 
-    for (auto& e: m_entities.getEntities()) 
+    for (auto& e: m_entities.getEntities())
     {
         if (e == m_player) { continue; }
 
         e->cTransform->position += e->cTransform->velocity;
     }
-    
+
 }
 
 void Game::sLifespan()
@@ -270,7 +311,7 @@ void Game::sLifespan()
     for (auto &e : m_entities.getEntities())
     {
         if (!e->cLifespan) continue;
-        
+
         e->cLifespan->remaining--;
         if (e->cLifespan->remaining <= 0)
         {
@@ -284,19 +325,19 @@ void Game::sLifespan()
             e->cShape->circle.setFillColor(sf::Color(fillColor.r, fillColor.g, fillColor.b, alpha ));
             e->cShape->circle.setOutlineColor(sf::Color(outlineColor.r, outlineColor.g, outlineColor.b, alpha));
         }
-        
+
     }
 }
 
 void Game::sCollision()
 {
-    for (auto& e: m_entities.getEntities()) 
+    for (auto& e: m_entities.getEntities())
     {
         // Check global bound and bounce if entity is not player
         const sf::FloatRect& globalBounds = e->cShape->circle.getGlobalBounds();
         auto windowSize = m_window.getSize();
-        if (e != m_player) 
-        { 
+        if (e != m_player)
+        {
             if (globalBounds.left <= 0 || globalBounds.left + globalBounds.width >= windowSize.x)
             {
                 e->cTransform->velocity.x *= -1;
@@ -304,10 +345,10 @@ void Game::sCollision()
             if (globalBounds.top <= 0 || globalBounds.top + globalBounds.height >= windowSize.y)
             {
                 e->cTransform->velocity.y *= -1;
-            }    
+            }
         }
         // Check if player is out of bounds and stop movement
-        else 
+        else
         {
             if (globalBounds.left <= 0)
             {
@@ -321,13 +362,13 @@ void Game::sCollision()
             {
                 e->cInput->up = false;
             }
-            if (globalBounds.top + globalBounds.height >= windowSize.y) 
+            if (globalBounds.top + globalBounds.height >= windowSize.y)
             {
                 e->cInput->down = false;
             }
         }
 
-        if (isCollisionActive && (e->tag() == ENEMY || e->tag() == SMALL_ENEMY) && e->isActive()) 
+        if (isCollisionActive && (e->tag() == ENEMY || e->tag() == SMALL_ENEMY) && e->isActive())
         {
             auto distanceToPlayer = m_player->cTransform->position - e->cTransform->position;
             if (distanceToPlayer.x * distanceToPlayer.x + distanceToPlayer.y * distanceToPlayer.y <= (m_player->cCollision->radius + e->cCollision->radius) * (m_player->cCollision->radius + e->cCollision->radius))
@@ -365,7 +406,7 @@ void Game::sEnemySpawner()
 
     m_lastEnemySpawnTime = m_currentFrame;
     int speedDiff = 1 + m_enemyConfig.SMAX - m_enemyConfig.SMIN;
-    auto speed = (rand() % speedDiff) + m_enemyConfig.SMIN; 
+    auto speed = (rand() % speedDiff) + m_enemyConfig.SMIN;
     auto vertices = (rand() % (1 + m_enemyConfig.VMAX - m_enemyConfig.VMIN)) + m_enemyConfig.VMIN;
     auto position = Vector2(0, 0);
     do
@@ -405,7 +446,7 @@ void Game::sGUI()
         }
         if (ImGui::BeginTabItem("Entities"))
         {
-            if (ImGui::CollapsingHeader("Entites by tag")) 
+            if (ImGui::CollapsingHeader("Entites by tag"))
             {
                 ImGui::Indent(10);
                 if (ImGui::CollapsingHeader(PLAYER))
@@ -510,7 +551,7 @@ void Game::sRender()
         m_window.draw(e->cShape->circle);
     }
 
-    
+
 
     // draw the ui last
     ImGui::SFML::Render(m_window);
@@ -572,7 +613,7 @@ void Game::sUserInput()
                     break;
             }
         }
-        
+
         if (event.type == sf::Event::KeyReleased)
         {
             switch (event.key.code)
@@ -625,10 +666,10 @@ void Game::sUserInput()
     }
 }
 
-void Game::createBackgroundImage() 
+void Game::createBackgroundImage()
 {
     auto windowSize = m_window.getSize();
-    
+
     int radius = 100;
     auto x = windowSize.x / radius;
     auto y = windowSize.y / radius;

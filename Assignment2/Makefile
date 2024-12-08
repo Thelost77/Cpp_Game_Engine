@@ -2,7 +2,7 @@ CXX := clang++
 OUTPUT := sfmlgame
 OUTPUT_DEBUG := sfmlgame_d
 # if you need to manually specify your SFML install dir, do so here
-SFML_DIR := /opt/homebrew/Cellar/sfml/2.6.1
+SFML_DIR := /opt/homebrew/Cellar/sfml/2.6.2
 
 # compiler and linker flags
 CXX_FLAGS_RELEASE := -std=c++20 -Wno-unused-result
