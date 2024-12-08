@@ -52,6 +52,7 @@ class Game
     bool                    isMovementActive = true;
     bool                    isUserInputActive = true;
     bool                    isRenderActive = true;
+    bool                    isSpecialWeaponCooldownActive = true;
 
     public:
     Game(const std::string &config, const std::string &font);

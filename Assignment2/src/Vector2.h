@@ -12,7 +12,7 @@ public:
     Vector2& scale(float scalar);
     Vector2& normalize();
     Vector2& perpendicular();
-    Vector2 clone();
+    Vector2 clone() const;
 
     bool operator==(const Vector2 &other) const;
     bool operator!=(const Vector2 &other) const;

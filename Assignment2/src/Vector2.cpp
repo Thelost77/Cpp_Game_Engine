@@ -35,7 +35,7 @@ Vector2 &Vector2::perpendicular()
     return *this;
 }
 
-Vector2 Vector2::clone()
+Vector2 Vector2::clone() const
 {
     return Vector2(x, y);
 }
