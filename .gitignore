@@ -368,4 +368,6 @@ bin/
 
 .DS_Store
 
+.idea/
+
 *.o
