@@ -1,0 +1,182 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-c",
+      "-std=c++20",
+      "-Wno-unused-result",
+      "-I./src",
+      "-I",
+      "./src/imgui",
+      "-I/opt/homebrew/Cellar/sfml/2.6.1/include",
+      "-o",
+      "src/Entity.o",
+      "src/Entity.cpp"
+    ],
+    "directory": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2",
+    "file": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/Entity.cpp",
+    "output": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/Entity.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-c",
+      "-std=c++20",
+      "-Wno-unused-result",
+      "-I./src",
+      "-I",
+      "./src/imgui",
+      "-I/opt/homebrew/Cellar/sfml/2.6.1/include",
+      "-o",
+      "src/EntityManager.o",
+      "src/EntityManager.cpp"
+    ],
+    "directory": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2",
+    "file": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/EntityManager.cpp",
+    "output": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/EntityManager.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-c",
+      "-std=c++20",
+      "-Wno-unused-result",
+      "-I./src",
+      "-I",
+      "./src/imgui",
+      "-I/opt/homebrew/Cellar/sfml/2.6.1/include",
+      "-o",
+      "src/Game.o",
+      "src/Game.cpp"
+    ],
+    "directory": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2",
+    "file": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/Game.cpp",
+    "output": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/Game.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-c",
+      "-std=c++20",
+      "-Wno-unused-result",
+      "-I./src",
+      "-I",
+      "./src/imgui",
+      "-I/opt/homebrew/Cellar/sfml/2.6.1/include",
+      "-o",
+      "src/Vector2.o",
+      "src/Vector2.cpp"
+    ],
+    "directory": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2",
+    "file": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/Vector2.cpp",
+    "output": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/Vector2.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-c",
+      "-std=c++20",
+      "-Wno-unused-result",
+      "-I./src",
+      "-I",
+      "./src/imgui",
+      "-I/opt/homebrew/Cellar/sfml/2.6.1/include",
+      "-o",
+      "src/main.o",
+      "src/main.cpp"
+    ],
+    "directory": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2",
+    "file": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/main.cpp",
+    "output": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-c",
+      "-std=c++20",
+      "-Wno-unused-result",
+      "-I./src",
+      "-I",
+      "./src/imgui",
+      "-I/opt/homebrew/Cellar/sfml/2.6.1/include",
+      "-o",
+      "src/imgui/imgui-SFML.o",
+      "src/imgui/imgui-SFML.cpp"
+    ],
+    "directory": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2",
+    "file": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/imgui/imgui-SFML.cpp",
+    "output": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/imgui/imgui-SFML.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-c",
+      "-std=c++20",
+      "-Wno-unused-result",
+      "-I./src",
+      "-I",
+      "./src/imgui",
+      "-I/opt/homebrew/Cellar/sfml/2.6.1/include",
+      "-o",
+      "src/imgui/imgui.o",
+      "src/imgui/imgui.cpp"
+    ],
+    "directory": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2",
+    "file": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/imgui/imgui.cpp",
+    "output": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/imgui/imgui.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-c",
+      "-std=c++20",
+      "-Wno-unused-result",
+      "-I./src",
+      "-I",
+      "./src/imgui",
+      "-I/opt/homebrew/Cellar/sfml/2.6.1/include",
+      "-o",
+      "src/imgui/imgui_draw.o",
+      "src/imgui/imgui_draw.cpp"
+    ],
+    "directory": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2",
+    "file": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/imgui/imgui_draw.cpp",
+    "output": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/imgui/imgui_draw.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-c",
+      "-std=c++20",
+      "-Wno-unused-result",
+      "-I./src",
+      "-I",
+      "./src/imgui",
+      "-I/opt/homebrew/Cellar/sfml/2.6.1/include",
+      "-o",
+      "src/imgui/imgui_tables.o",
+      "src/imgui/imgui_tables.cpp"
+    ],
+    "directory": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2",
+    "file": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/imgui/imgui_tables.cpp",
+    "output": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/imgui/imgui_tables.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-c",
+      "-std=c++20",
+      "-Wno-unused-result",
+      "-I./src",
+      "-I",
+      "./src/imgui",
+      "-I/opt/homebrew/Cellar/sfml/2.6.1/include",
+      "-o",
+      "src/imgui/imgui_widgets.o",
+      "src/imgui/imgui_widgets.cpp"
+    ],
+    "directory": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2",
+    "file": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/imgui/imgui_widgets.cpp",
+    "output": "/Users/wiktorziebka/Projects/Cpp_Game_Engine/Assignment2/src/imgui/imgui_widgets.o"
+  }
+]
